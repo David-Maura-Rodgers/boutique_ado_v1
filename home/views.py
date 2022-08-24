@@ -7,6 +7,3 @@ def index(request):
     '''
 
     return render(request, 'home/index.html')
-
-
-# /workspace/boutique_ado_v1/home/templates/index.html
