@@ -2,8 +2,10 @@ from django.db import models
 
 
 class Category(models.Model):
+    ''' Model '''
 
     class Meta:
+        ''' Change Categorys to Catergories '''
         verbose_name_plural = 'Categories'
 
     name = models.CharField(max_length=254)
@@ -13,10 +15,14 @@ class Category(models.Model):
         return self.name
 
     def get_friendly_name(self):
+        '''
+        return user friendly category name
+        '''
         return self.friendly_name
 
 
 class Product(models.Model):
+    ''' Model '''
     category = models.ForeignKey(
         'Category', null=True, blank=True, on_delete=models.SET_NULL
     )
