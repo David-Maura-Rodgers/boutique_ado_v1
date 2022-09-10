@@ -46,9 +46,7 @@ INSTALLED_APPS = [
     'products',
     'bag',
     'checkout',
-
-    # Other
-    'crispy-forms',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
                 'bag.contexts.bag_contents',
             ],
             'builtins': [
