@@ -14,10 +14,6 @@ import json
 
 @require_POST
 def cache_checkout_data(request):
-    '''
-    View: To modify Stripe payment intent with metadata object
-    View: To check and render if user checks save info box
-    '''
     try:
         pid = request.POST.get('client_secret').split('_secret')[0]
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -34,9 +30,6 @@ def cache_checkout_data(request):
 
 
 def checkout(request):
-    '''
-    View: render form data and render amount due
-    '''
     stripe_public_key = settings.STRIPE_PUBLIC_KEY
     stripe_secret_key = settings.STRIPE_SECRET_KEY
 
@@ -56,7 +49,11 @@ def checkout(request):
         }
         order_form = OrderForm(form_data)
         if order_form.is_valid():
-            order = order_form.save()
+            order = order_form.save(commit=False)
+            pid = request.POST.get('client_secret').split('_secret')[0]
+            order.stripe_pid = pid
+            order.original_bag = json.dumps(bag)
+            order.save()
             for item_id, item_data in bag.items():
                 try:
                     product = Product.objects.get(id=item_id)
@@ -78,26 +75,21 @@ def checkout(request):
                             order_line_item.save()
                 except Product.DoesNotExist:
                     messages.error(request, (
-                        "One of the products in your bag wasn't found \
-                        in our database. "
+                        "One of the products in your bag wasn't found in our database. "
                         "Please call us for assistance!")
                     )
                     order.delete()
                     return redirect(reverse('view_bag'))
 
             request.session['save_info'] = 'save-info' in request.POST
-            return redirect(
-                reverse('checkout_success', args=[order.order_number])
-            )
+            return redirect(reverse('checkout_success', args=[order.order_number]))
         else:
             messages.error(request, 'There was an error with your form. \
                 Please double check your information.')
     else:
         bag = request.session.get('bag', {})
         if not bag:
-            messages.error(
-                request, "There's nothing in your bag at the moment"
-            )
+            messages.error(request, "There's nothing in your bag at the moment")
             return redirect(reverse('products'))
 
         current_bag = bag_contents(request)
