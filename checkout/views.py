@@ -15,6 +15,7 @@ import json
 @require_POST
 def cache_checkout_data(request):
     '''
+    View: To modify Stripe payment intent with metadata object
     View: To check and render if user checks save info box
     '''
     try:
@@ -33,6 +34,9 @@ def cache_checkout_data(request):
 
 
 def checkout(request):
+    '''
+    View: render form data and render amount due
+    '''
     stripe_public_key = settings.STRIPE_PUBLIC_KEY
     stripe_secret_key = settings.STRIPE_SECRET_KEY
 
